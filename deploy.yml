@@ -10,7 +10,7 @@
         artifact_id: webblog
         #version: 0.0.1-SNAPSHOT
         extension: war
-        repository_url: http://${NEXUS_HOST}/repository/maven-snapshots/
+        repository_url: http://nexus:8081/repository/maven-snapshots/
         #dest: /var/jenkins_home/
         dest: /usr/local/tomcat/webapps/
 
