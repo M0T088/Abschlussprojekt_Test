@@ -1,64 +1,37 @@
-//String maven = "maven:3.6.3-adoptopenjdk-14"
 pipeline {
     agent any
     environment {
-        NEXUS_HOST = 'nexus:8081'
-        SONAR_HOST = 'sonarqube:9000'
+        TOMCAT_HOST = 'servers_tomcat_1:8082'
+        NEXUS_HOST = 'servers_nexus_1:8083'
+        SONAR_HOST = 'servers_sonarqube_1:8084'
     }
     stages {
-		stage('docker-compose up') {
+		stage('Compile') {
 			steps {
-				sh "docker-compose up --build -d"
-          }
+                script {
+                    compile.call()
+                }
+            }
         }
         stage('Sonar Verify Test') {
-            /*agent {
-                docker {
-                    image 'maven'
-                    args '--network moto_net'
-                }
-            }*/
             steps {
-                configFileProvider([configFile(fileId: 'f3ef7a41-a468-41f2-8819-7a02ecf6050b', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
-                    sleep (5)
-                    sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS clean verify sonar:sonar'
+                script {
+                    sonar.call()
                 }
             }
         }
-        stage('Deploy to Nexus Repo') {
-            /*agent {
-                docker {
-                    image 'maven'
-                    args '--network moto_net'
-                }
-            }*/
+        stage('Deploy Nexus') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
-                    configFileProvider([configFile(fileId: 'f3ef7a41-a468-41f2-8819-7a02ecf6050b', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
-                        sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS clean deploy -DskipTests -DdeployOnly'
-                    }
+                script {
+                    nexus.call()
                 }
             }
         }
-        /*stage('Deploy to Tomcat') {
-            agent {
-                docker {
-                    image 'maven'
-                    args '--network moto_net'
-                }
-            }
+        stage('Deploy Tomcat') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'tomcat', usernameVariable: 'TOMCAT_USER', passwordVariable: 'TOMCAT_PASSWORD')]) {
-                    configFileProvider([configFile(fileId: 'f3ef7a41-a468-41f2-8819-7a02ecf6050b', variable: 'MAVEN_GLOBAL_SETTINGS')]) {
-                        sh 'mvn -gs $MAVEN_GLOBAL_SETTINGS tomcat7:deploy -DskipTests -DdeployOnly'
-                    }
+                script {
+                    tomcat.call()
                 }
-            }
-        }*/
-        stage('Deploy War File to Tomcat') {
-            steps {
-				ansiblePlaybook inventory: 'inventory', colorized: true, installation: 'ansible2', playbook: 'deploy.yml', disableHostKeyChecking: true
-                ansiblePlaybook inventory: 'inventory', colorized: true, installation: 'ansible2', playbook: 'remove.yml', disableHostKeyChecking: true
             }
         }
     }
