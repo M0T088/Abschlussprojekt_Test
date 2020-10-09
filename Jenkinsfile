@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        TOMCAT_HOST = 'servers_tomcat_1:8082'
-        NEXUS_HOST = 'servers_nexus_1:8083'
-        SONAR_HOST = 'servers_sonarqube_1:8084'
+        TOMCAT_HOST = 'servers_tomcat_1:8080'
+        NEXUS_HOST = 'servers_nexus_1:8081'
+        SONAR_HOST = 'servers_sonarqube_1:9000'
     }
     stages {
 		stage('Compile') {
