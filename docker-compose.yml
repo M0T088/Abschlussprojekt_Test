@@ -1,0 +1,95 @@
+version: '2.1'
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.21.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    ports:
+      - 8085:9090
+    networks:
+      - tools
+    labels:
+      org.label-schema.group: "monitoring"
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: unless-stopped
+    ports:
+      - 8086:3000
+    networks:
+      - tools
+    labels:
+      org.label-schema.group: "monitoring"
+
+  fluentd:
+    build: ./fluentd
+    container_name: fluentd
+    volumes:
+      - ./fluentd/conf:/fluentd/etc
+    links:
+      - "elasticsearch"
+    ports:
+      - "8087:24224"
+      - "8087:24224/udp"
+    networks:
+      - tools
+
+  elasticsearch:
+    image: elasticsearch:7.9.2
+    container_name: elasticsearch
+    environment:
+      - "discovery.type=single-node"
+    expose:
+      - "9200"
+    ports:
+      - "8088:9200"
+    networks:
+      - tools
+
+  kibana:
+    build: ./kibana
+    container_name: kibana
+    links:
+      - "elasticsearch"
+    ports:
+      - "8089:5601"
+    networks:
+      - tools
+  
+  elasticsearch_exporter:
+    image: justwatch/elasticsearch_exporter:1.1.0
+    container_name: es-exporter-container
+    command:
+     - '--es.uri=http://elasticsearch-service:9200'
+    ports:
+     - "8090:9114"
+    links:
+      - "elasticsearch"
+    restart: unless-stopped
+    networks:
+      - tools
+    labels:
+      org.label-schema.group: "monitoring"

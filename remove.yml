@@ -1,0 +1,11 @@
+---
+- name: Deploy WAR File to tomcat
+  hosts: cont2
+  connection: docker
+  tasks:
+    - name: Removing WAR File
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+      - /var/jenkins_home/webblog.war
