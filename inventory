@@ -1,5 +1,5 @@
 [cont]
-servers_tomcat_1
+tomcat:8080
 
 [cont2]
 jenkins
