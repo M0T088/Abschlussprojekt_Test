@@ -12,7 +12,7 @@
         extension: war
         repository_url: http://nexus:8081/repository/maven-snapshots/
         #dest: /var/jenkins_home/
-        dest: /usr/local/tomcat/webapps
+        dest: /usr/local/tomcat/webapps/webblog.war
 
     #- name: Copy Webblog WAR File to Tomcat
     #  copy:
