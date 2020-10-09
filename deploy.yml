@@ -11,14 +11,14 @@
         #version: 0.0.1-SNAPSHOT
         extension: war
         repository_url: http://nexus:8081/repository/maven-snapshots/
-        dest: /var/jenkins_home/
-        #dest: /usr/local/tomcat/webapps/
+        #dest: /var/jenkins_home/
+        dest: /usr/local/tomcat/webapps
 
-    - name: Copy Webblog WAR File to Tomcat
-      copy:
-       src:  /var/jenkins_home/webblog.war
-       dest: /usr/local/tomcat/webapps/
-       mode: 0755
+    #- name: Copy Webblog WAR File to Tomcat
+    #  copy:
+    #   src:  /var/jenkins_home/webblog.war
+    #   dest: /usr/local/tomcat/webapps/
+    #   mode: 0755
     
 
 
