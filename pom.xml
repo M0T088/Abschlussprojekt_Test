@@ -99,6 +99,8 @@
 				<configuration>
 					<url>http://${TOMCAT_HOST}/manager/text</url>
 					<server>TomcatServer</server>
+					<username>tomcat</username>
+					<password>s3cret</password>
 					<path>/webblog</path>
 				</configuration>
 			</plugin>
