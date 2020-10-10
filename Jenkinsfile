@@ -6,6 +6,13 @@ pipeline {
         SONAR_HOST = 'sonarqube:9000'
     }
     stages {
+        stage('Docker-Compose up') {
+			steps {
+                script {
+                    dockercomposeup.call()
+                }
+            }
+        }
 		stage('Compile') {
 			steps {
                 script {
@@ -30,7 +37,14 @@ pipeline {
         stage('Deploy Tomcat') {
             steps {
                 script {
-                    tomcatdeploy.call()
+                    tomcat.call()
+                }
+            }
+        }
+        stage('Docker-Compose down') {
+			steps {
+                script {
+                    dockercomposedown.call()
                 }
             }
         }
