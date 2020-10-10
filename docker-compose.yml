@@ -1,5 +1,10 @@
 version: '2.1'
 
+networks:
+  tools:
+    external:
+      name: tools
+
 volumes:
   prometheus_data: {}
   grafana_data: {}
