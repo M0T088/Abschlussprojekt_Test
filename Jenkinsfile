@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        TOMCAT_HOST = 'servers_tomcat_1:8080'
-        NEXUS_HOST = 'servers_nexus_1:8081'
-        SONAR_HOST = 'servers_sonarqube_1:9000'
+        TOMCAT_HOST = 'tomcat:8080'
+        NEXUS_HOST = 'nexus:8081'
+        SONAR_HOST = 'sonarqube:9000'
     }
     stages {
 		stage('Compile') {
@@ -30,7 +30,7 @@ pipeline {
         stage('Deploy Tomcat') {
             steps {
                 script {
-                    tomcat.call()
+                    tomcatdeploy.call()
                 }
             }
         }
