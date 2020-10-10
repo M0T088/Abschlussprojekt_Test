@@ -14,7 +14,7 @@ services:
     image: prom/prometheus:v2.21.0
     container_name: prometheus
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/etc/prometheus
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -52,8 +52,8 @@ services:
   fluentd:
     build: ./fluentd
     container_name: fluentd
-    volumes:
-      - ./fluentd/conf/fluent.conf:/fluentd/etc/fluent.conf
+    #volumes:
+    #  - ./fluentd/conf:/fluentd/etc
     links:
       - "elasticsearch"
     ports:
